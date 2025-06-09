@@ -1,133 +1,167 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FiUpload, FiImage, FiCheckCircle, FiAlertCircle, FiCamera, FiVideoOff } from 'react-icons/fi';
+import { FiUpload, FiImage, FiCheckCircle, FiAlertCircle, FiCamera, FiVideoOff, FiTag } from 'react-icons/fi';
 import Webcam from 'react-webcam';
 
 const Upload = () => {
-  const [image, setImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [defect_description, setdefect_description] = useState('');
-  const [confidence, setConfidence] = useState(0);
+  // --- State Management ---
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null); // URL for displaying the image
+  const [imageFile, setImageFile] = useState(null); // The actual File object to send to backend
+  const [analysisResult, setAnalysisResult] = useState(null); // Stores defect_description, confidence, predictedClass
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [isWebcamActive, setIsWebcamActive] = useState(false);
-  const [showDetectButton, setShowDetectButton] = useState(false);
   const webcamRef = useRef(null);
 
-  // Initialize webcam
-  const startWebcam = useCallback(() => {
-    setIsWebcamActive(true);
+  // --- Constants ---
+  const MAX_FILE_SIZE_MB = 5; // Maximum allowed file size in MB
+  const NON_DEFECTIVE_THRESHOLD = 0.70; // Confidence threshold for classifying as 'Non-Defective'
+
+  // --- Utility Functions ---
+
+  /**
+   * Resets all relevant states, clearing previous image and analysis results.
+   */
+  const resetStates = useCallback(() => {
+    setImagePreviewUrl(null);
+    setImageFile(null);
+    setAnalysisResult(null);
+    setIsProcessing(false);
     setError(null);
   }, []);
 
-  // Stop webcam
+  /**
+   * Handles image processing from file or webcam capture.
+   * @param {File} file - The image file to process.
+   */
+  const processImageFile = useCallback((file) => {
+    resetStates(); // Clear previous states first
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file (JPEG, PNG, etc.)');
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setError(`Image size should be less than ${MAX_FILE_SIZE_MB}MB`);
+      return;
+    }
+
+    setImagePreviewUrl(URL.createObjectURL(file));
+    setImageFile(file);
+    setError(null);
+    setIsWebcamActive(false); // Ensure webcam is stopped if a file is uploaded
+  }, [resetStates]);
+
+  // --- Webcam Handlers ---
+
+  const startWebcam = useCallback(() => {
+    resetStates(); // Clear previous results when starting webcam
+    setIsWebcamActive(true);
+    setError(null);
+  }, [resetStates]);
+
   const stopWebcam = useCallback(() => {
     setIsWebcamActive(false);
   }, []);
 
-  // Capture from webcam and automatically close it
   const captureFromWebcam = useCallback(() => {
     if (!isWebcamActive || !webcamRef.current) {
-      setError('Camera not ready.');
+      setError('Camera not ready. Please ensure camera access is granted.');
       return;
     }
 
     const imageSrc = webcamRef.current.getScreenshot();
     if (!imageSrc) {
-      setError('Failed to capture image from webcam.');
+      setError('Failed to capture image from webcam. Please try again.');
       return;
     }
 
-    // Convert base64 to Blob
     fetch(imageSrc)
       .then(res => res.blob())
       .then(blob => {
         const file = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' });
-        setImage(URL.createObjectURL(file));
-        setImageFile(file);
-        setShowDetectButton(true);
+        processImageFile(file); // Use the unified image processing logic
         stopWebcam(); // Close the webcam after capture
       })
       .catch(err => {
-        console.error('Error converting image:', err);
-        setError('Failed to process captured image.');
+        console.error('Error converting webcam image:', err);
+        setError('Failed to process captured image from webcam.');
       });
-  }, [isWebcamActive, stopWebcam]);
+  }, [isWebcamActive, processImageFile, stopWebcam]);
+
+  // --- File Upload/Drag & Drop Handlers ---
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processImageFile(e.dataTransfer.files[0]);
+    }
+  }, [processImageFile]);
+
+  const handleFileSelect = useCallback((e) => {
+    if (e.target.files && e.target.files[0]) {
+      processImageFile(e.target.files[0]);
+    }
+  }, [processImageFile]);
+
+  // --- Defect Detection Logic ---
 
   const detectDefects = async () => {
     if (!imageFile) {
-      setError('No image available for detection');
+      setError('No image available for detection.');
       return;
     }
 
     setIsProcessing(true);
     setError(null);
-    
+    setAnalysisResult(null); // Clear previous analysis results
+
     try {
       const formData = new FormData();
       formData.append('image', imageFile);
 
+      // IMPORTANT: Ensure your backend is running at this URL (e.g., a Flask server)
       const response = await fetch('http://127.0.0.1:5000/analyze', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
+        const errorData = await response.json().catch(() => ({ message: 'Unknown server error' }));
+        throw new Error(errorData.message || `Server responded with status ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('Defect detection result:', result);
-     
-      // Handle the API response
+      console.log('API response:', result);
+
       if (result) {
-        setdefect_description(result.defect_description || 'Defect detected');
-        setConfidence(result.confidence || 0);
+        const confidence = parseFloat(result.confidence);
+        const newConfidence = isNaN(confidence) ? 0 : confidence;
+        const predictedClass = newConfidence >= NON_DEFECTIVE_THRESHOLD ? 'Non-Defective' : 'Defective';
+
+        setAnalysisResult({
+          defect_description: result.defect_description || 'No specific defect description provided.',
+          confidence: newConfidence,
+          predictedClass: predictedClass,
+        });
       } else {
-        setError(result.message || 'Defect detection failed');
+        setError('Defect detection response was empty or invalid.');
       }
     } catch (err) {
-      console.error('Error detecting defects:', err);
-      setError('Failed to detect defects. Please try again.');
+      console.error('Error during defect detection:', err);
+      setError(`Failed to detect defects: ${err.message || 'Please check your backend server.'}`);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleImageUpload = useCallback((file) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file (JPEG, PNG, etc.)');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      setError('Image size should be less than 5MB');
-      return;
-    }
-
-    setError(null);
-    setImage(URL.createObjectURL(file));
-    setImageFile(file);
-    setShowDetectButton(true);
-  }, []);
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    if (e.dataTransfer.files[0]) {
-      handleImageUpload(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileSelect = (e) => {
-    if (e.target.files[0]) {
-      handleImageUpload(e.target.files[0]);
-    }
-  };
-
+  // --- Webcam Constraints ---
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "environment"
+    facingMode: "environment" // Use "user" for front camera, "environment" for back camera
   };
 
   return (
@@ -135,12 +169,13 @@ const Upload = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen w-full py-20 px-4 md:px-8"
+      className="min-h-screen w-full py-20 px-4 md:px-8 flex flex-col items-center"
       style={{
         background: 'radial-gradient(circle at center, #1c1c1f 0%, #000000 100%)',
       }}
     >
-      <div className="w-full mx-auto">
+      <div className="w-full max-w-7xl mx-auto">
+        {/* Header */}
         <motion.div
           initial={{ y: -20 }}
           animate={{ y: 0 }}
@@ -151,7 +186,7 @@ const Upload = () => {
           <p className="text-lg text-gray-400">Upload product images for defect detection</p>
         </motion.div>
 
-        {/* Webcam Preview (hidden unless active) */}
+        {/* Webcam Preview */}
         {isWebcamActive && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -186,7 +221,7 @@ const Upload = () => {
         <motion.div
           whileHover={{ scale: 1.01 }}
           className="border-2 border-dashed border-blue-500/50 rounded-xl p-6 w-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center cursor-pointer bg-gradient-to-br from-gray-800/10 to-black/20 transition-all mb-8"
-          onDragOver={(e) => e.preventDefault()}
+          onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
           onDrop={handleDrop}
           style={{
             boxShadow: '0 4px 20px rgba(59, 130, 246, 0.15)'
@@ -199,7 +234,7 @@ const Upload = () => {
             <FiUpload className="text-blue-400 text-4xl mb-3" />
           </motion.div>
           <p className="text-md mb-3 text-gray-300">Drag & drop product image here</p>
-          <p className="text-sm mb-4 text-gray-400/60">Supports JPG, PNG up to 5MB</p>
+          <p className="text-sm mb-4 text-gray-400/60">Supports JPG, PNG up to {MAX_FILE_SIZE_MB}MB</p>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <div>
@@ -234,6 +269,7 @@ const Upload = () => {
           </div>
         </motion.div>
 
+        {/* Error Message Display */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -245,7 +281,8 @@ const Upload = () => {
           </motion.div>
         )}
 
-        {image && (
+        {/* Image Preview and Analysis Results */}
+        {imagePreviewUrl && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -255,21 +292,22 @@ const Upload = () => {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
             }}
           >
-            {/* Image Preview */}
+            {/* Image Preview Area */}
             <motion.div
               className="flex-1 w-full lg:w-auto relative"
               whileHover={{ scale: 1.02 }}
             >
               <img
-                src={image}
-                alt="Captured product"
+                src={imagePreviewUrl}
+                alt="Product image for defect detection"
                 className="w-full h-auto rounded-lg shadow-lg border-2 border-blue-900/50"
               />
               <div className="absolute bottom-3 left-3 bg-black/70 text-blue-300 px-2 py-1 rounded text-xs">
                 Product Image
               </div>
-              
-              {showDetectButton && !isProcessing && (
+
+              {/* Detect Defects Button */}
+              {imageFile && !isProcessing && !analysisResult && ( // Show button only if file exists, not processing, and no results yet
                 <div className="absolute top-3 right-3">
                   <button
                     onClick={detectDefects}
@@ -281,7 +319,7 @@ const Upload = () => {
               )}
             </motion.div>
 
-            {/* Analysis Results */}
+            {/* Analysis Results Display */}
             <div className="flex-1 w-full lg:w-auto bg-gradient-to-br from-gray-900/20 to-black/30 p-5 rounded-lg border border-gray-800/20">
               <h3 className="text-xl font-semibold mb-4 text-blue-300 flex items-center gap-2">
                 <FiCheckCircle className="text-blue-400" /> Inspection Results
@@ -298,15 +336,32 @@ const Upload = () => {
                 </motion.div>
               ) : (
                 <>
-                  {defect_description ? (
+                  {analysisResult ? (
                     <>
+                      {/* Predicted Class Section */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className={`p-3 rounded-lg mb-4 flex items-center gap-3 ${
+                          analysisResult.predictedClass === 'Defective' ? 'bg-red-800/30 border border-red-700' : 'bg-green-800/30 border border-green-700'
+                        }`}
+                      >
+                        <FiTag className={`${analysisResult.predictedClass === 'Defective' ? 'text-red-400' : 'text-green-400'} text-xl`} />
+                        <p className={`text-lg font-bold ${analysisResult.predictedClass === 'Defective' ? 'text-red-200' : 'text-green-200'}`}>
+                          Prediction: {analysisResult.predictedClass}
+                        </p>
+                      </motion.div>
+
+                      {/* Defect Analysis */}
                       <div className="mb-6">
                         <h4 className="text-md font-medium mb-2 text-blue-300">Defect Analysis:</h4>
                         <div className="bg-gray-800/40 p-3 rounded-lg border-l-3 border-blue-600">
-                          <p className="text-gray-100 text-sm">{defect_description}</p>
+                          <p className="text-gray-100 text-sm">{analysisResult.defect_description}</p>
                         </div>
                       </div>
 
+                      {/* Quality Confidence */}
                       <div>
                         <h4 className="text-md font-medium mb-2 text-blue-300">Quality Confidence:</h4>
                         <div className="flex items-center gap-3 mb-2">
@@ -314,16 +369,18 @@ const Upload = () => {
                             <motion.div
                               className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300"
                               initial={{ width: 0 }}
-                              animate={{ width: `${confidence*100}%` }}
+                              animate={{ width: `${analysisResult.confidence * 100}%` }}
                               transition={{ duration: 1, delay: 0.5 }}
                             />
                           </div>
-                          <span className="text-blue-300 font-bold whitespace-nowrap text-sm">{confidence*100}%</span>
+                          <span className="text-blue-300 font-bold whitespace-nowrap text-sm">
+                            {Math.round(analysisResult.confidence * 100)}%
+                          </span>
                         </div>
                         <p className="text-xs text-gray-400">
-                          {confidence >= 90
+                          {analysisResult.confidence >= 0.90
                             ? "Excellent quality - Ready for shipment"
-                            : confidence >= 75
+                            : analysisResult.confidence >= NON_DEFECTIVE_THRESHOLD
                               ? "Good quality - Minor issues detected"
                               : "Needs review - Significant defects found"}
                         </p>
@@ -331,7 +388,8 @@ const Upload = () => {
                     </>
                   ) : (
                     <div className="text-center py-8 text-gray-400">
-                      <p>Click "Detect Defects" to analyze the image</p>
+                      <p>Upload an image or capture from webcam to start analysis.</p>
+                      {imageFile && <p>Click "Detect Defects" to analyze the image.</p>}
                     </div>
                   )}
                 </>
