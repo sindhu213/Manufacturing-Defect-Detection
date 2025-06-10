@@ -381,11 +381,9 @@ const Upload = () => {
                           </span>
                         </div>
                         <p className="text-xs text-gray-400">
-                          {analysisResult.confidence >= 0.90
+                          {analysisResult.predictedClass == "Non Defective"
                             ? "Excellent quality - Ready for shipment"
-                            : analysisResult.confidence >= NON_DEFECTIVE_THRESHOLD
-                              ? "Good quality - Minor issues detected"
-                              : "Needs review - Significant defects found"}
+                            : "Needs review - Significant defects found"}
                         </p>
                       </div>
                     </>
