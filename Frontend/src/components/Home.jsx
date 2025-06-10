@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx"; 
-
+import zipImage from '../assets/zip.jpg'; 
+import candleImage from '../assets/candle.jpg';
+import metalNutImage from '../assets/metal-nuts.jpg'; 
 import { CheckCircleIcon, StarIcon } from '@heroicons/react/24/solid'; 
 
 const Home = () => {
@@ -26,25 +28,25 @@ const Home = () => {
 
   const deviceShowcaseItems = [
     {
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmPpHRs0RsSwMRrSyDWIXXHJL4WD6fVi8J4A&s",
-      title: "Smartphones & Wearables",
-      desc: "Flawless screens, perfect circuits.",
+      img: zipImage,
+      title: "Colorful Zippers",
+      desc: "Detecting the flaws before they break the flow.",
       color: "text-teal-300", 
-      fallback: "Smartphone",
+      fallback: "Zip",
     },
     {
-      img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80",
-      title: "Laptops & Computers",
-      desc: "Ensuring every component is pixel-perfect.",
+      img: metalNutImage,
+      title: "Screws and Metal Parts",
+      desc: "Built strong, tested stronger.",
       color: "text-blue-300",
-      fallback: "Laptop",
+      fallback: "Metal Parts",
     },
     {
-      img: "https://asimily.com/wp-content/uploads/2024/11/11-Common-IoT-Devices-That-Are-Vulnerable-to-Hacking.png",
-      title: "IoT & Smart Home",
-      desc: "Smart devices, smarter quality.",
+      img: candleImage,
+      title: "Colorful Candles",
+      desc: "Detecting imperfections before the first spark.",
       color: "text-purple-300",
-      fallback: "IoT Gadget",
+      fallback: "Candles",
     },
   ];
 
@@ -79,7 +81,7 @@ const Home = () => {
       desc: "Delivering premium product experiences.",
       color: "text-indigo-300",
       fallback: "Consumer Electronics",
-      link: "https://gembah.com/blog/ais-role-in-electronics-manufacturing/#:~:text=AI%2Ddriven%20image%20analysis%20can,detection%20can%20prevent%20costly%20errors."
+      link: "https://gembah.com/blog/ais-role-in-electronics-manufacturing/"
     },
   ];
 
@@ -88,7 +90,7 @@ const Home = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col gap-6 p-4 md:p-8 min-h-screen w-full overflow-x-hidden"
+      className="flex flex-col gap-6 py-25 px-4 md:p-8 min-h-screen w-full overflow-x-hidden"
       style={{
         backgroundImage:
           "linear-gradient(to right bottom, #0c0c0f, #181820, #212231, #2b2c43, #363755, #3a3553, #3d3451, #40324e, #362538, #281b25, #191015, #000000)",
@@ -105,14 +107,13 @@ const Home = () => {
       >
         <motion.h1
           className={clsx(
-            "text-5xl sm:text-6xl md:text-7xl font-bold mb-1 pt-20 sm:pt-6 pb-3 bg-clip-text text-transparent leading-tight",
-            // Adjusted font sizes for better responsiveness on small screens
+            "text-5xl sm:text-6xl md:text-7xl font-bold mb-1 pt-20 sm:pt-6 pb-3 bg-clip-text text-transparent leading-tight"
           )}
           style={{
             backgroundImage:
               "linear-gradient(to right, #93c5fd, #a78bfa, #c4b5fd)",
             fontFamily: "'Rajdhani', sans-serif",
-            fontWeight: 700,
+            fontWeight: 600,
             letterSpacing: "1px",
             textShadow: "0 2px 10px rgba(167, 139, 250, 0.3)",
           }}
@@ -122,7 +123,7 @@ const Home = () => {
           NeuroSpec
         </motion.h1>
         <motion.p
-          className="text-lg sm:text-xl md:text-2xl text-gray-400 px-2 max-w-4xl mx-auto" // Added max-width for better line length
+          className="text-lg sm:text-xl md:text-2xl text-gray-400 px-2 max-w-4xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
@@ -168,22 +169,17 @@ const Home = () => {
             lineHeight: "1.8",
           }}
         >
-          NeuroSpec ensures{" "}
-          <span className="font-semibold text-green-300">
-            top-notch quality
-          </span>{" "}
-          across a vast spectrum of electronic devices, from the smallest IoT
-          gadgets to sophisticated industrial equipment.
+          NeuroSpec is an innovative initiative focused on building intelligent vision systems that revolutionize industrial inspections. Leveraging deep learning and high-precision imaging, our adaptive platform detects flaws across diverse products—from electronics to textiles—with growing accuracy and speed.
         </p>
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-center"
-          variants={sectionVariants} // Apply stagger to children here
+          variants={sectionVariants}
         >
           {deviceShowcaseItems.map((item, index) => (
             <motion.div
               key={index}
               className="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-gray-900 bg-opacity-50"
-              variants={itemVariants} // Each item animates individually
+              variants={itemVariants}
               whileHover={{ y: -5, scale: 1.03 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
@@ -193,16 +189,16 @@ const Home = () => {
                 className="w-36 h-36 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-lg mb-3 sm:mb-4 shadow-md"
                 initial={{ rotateY: 90, opacity: 0 }}
                 animate={{ rotateY: 0, opacity: 1 }}
-                transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }} // Adjusted delay slightly
+                transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
                 onError={(e) => {
-                  e.currentTarget.src = `https://placehold.co/200x200/5eead4/0f172a?text=${item.fallback.replace(/\s/g, '+')}`; // Replaced target with currentTarget, encoded text for URL
-                  e.currentTarget.alt = `Image not available for ${item.fallback}`; // Improved fallback alt text
+                  e.currentTarget.src = `https://placehold.co/200x200/5eead4/0f172a?text=${item.fallback.replace(/\s/g, '+')}`;
+                  e.currentTarget.alt = `Image not available for ${item.fallback}`;
                 }}
               />
               <h3
                 className={clsx(
-                  `text-lg sm:text-xl font-semibold mb-1 sm:mb-2`,
-                  item.color // Dynamically add color class
+                  "text-lg sm:text-xl font-semibold mb-1 sm:mb-2",
+                  item.color 
                 )}
                 style={{
                   fontFamily: "'Oxanium', sans-serif",
@@ -264,11 +260,11 @@ const Home = () => {
         </p>
         <motion.div
           className="flex flex-col lg:flex-row items-center justify-around gap-6 sm:gap-8"
-          variants={sectionVariants} // Apply stagger to children here
+          variants={sectionVariants}
         >
           <motion.img
             src="https://media.istockphoto.com/id/1320950393/photo/cars-on-production-line-in-factory.jpg?s=612x612&w=0&k=20&c=WgJLxtOWIGt80cbC0OFc3wQAhraIxlz_H7l-ySDxkOw="
-            alt="Automated car production line in a factory" // More descriptive alt text
+            alt="Automated car production line in a factory"
             className="w-full lg:w-1/2 xl:w-2/5 object-cover rounded-xl shadow-xl border border-purple-500 max-h-64 sm:max-h-80 md:max-h-96"
             variants={itemVariants}
             initial={{ x: -100, opacity: 0 }}
@@ -320,7 +316,7 @@ const Home = () => {
               ].map((item, i) => (
                 <motion.li
                   key={i}
-                  variants={itemVariants} // Each list item animates individually
+                  variants={itemVariants}
                   whileHover={{ x: 5 }}
                   style={{
                     fontWeight: 400,
@@ -372,17 +368,17 @@ const Home = () => {
         </p>
         <motion.div
           className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
-          variants={sectionVariants} // Apply stagger to children here
+          variants={sectionVariants}
         >
           {industryImpactItems.map((item, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-gray-900 bg-opacity-50 group" // Added group for potential future hover effects
+              className="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-gray-900 bg-opacity-50 group"
               variants={itemVariants}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              {item.link ? ( // Conditionally render an anchor tag if link exists
+              {item.link ? (
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className="block">
                   <motion.img
                     src={item.img}
@@ -408,9 +404,9 @@ const Home = () => {
 
               <h3
                 className={clsx(
-                  `text-base sm:text-lg md:text-xl font-semibold mb-1`,
+                  "text-base sm:text-lg md:text-xl font-semibold mb-1",
                   item.color,
-                  item.link && "group-hover:underline cursor-pointer" // Add underline and cursor if link exists
+                  item.link && "group-hover:underline cursor-pointer"
                 )}
                 style={{
                   fontFamily: "'Oxanium', sans-serif",
@@ -447,7 +443,7 @@ const Home = () => {
         transition={{ delay: 1.2, duration: 0.8 }}
       >
         <div
-          className="text-white px-4 sm:px-6 py-2 sm:py-3 md:px-8 md:py-4 rounded-full shadow-lg flex items-center gap-2 sm:gap-3 text-sm sm:text-base md:text-lg whitespace-nowrap" // Added whitespace-nowrap to prevent breaking
+          className="text-white px-4 sm:px-6 py-2 sm:py-3 md:px-8 md:py-4 rounded-full shadow-lg flex items-center gap-2 sm:gap-3 text-sm sm:text-base md:text-lg whitespace-nowrap"
           style={{
             backgroundImage:
               "linear-gradient(to right, #4c40b8, #6d28d9, #9333ea)",
@@ -459,7 +455,7 @@ const Home = () => {
             animate={{ rotate: [0, 15, -15, 0] }}
             transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
           >
-            <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Icon added */}
+            <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
           </motion.span>
           <span>High Quality Assurance — Your Trust, Our Priority!</span>
           <motion.span
@@ -471,7 +467,7 @@ const Home = () => {
               delay: 0.5,
             }}
           >
-            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Icon added */}
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6" />
           </motion.span>
         </div>
       </motion.div>
