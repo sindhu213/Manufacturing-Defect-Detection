@@ -1,13 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
-import clsx from "clsx"; // Make sure to install: npm install clsx
+import clsx from "clsx"; 
 
-// Optional: You can install and use icon libraries for better visuals
-// For example, using Heroicons: npm install @heroicons/react
-import { CheckCircleIcon, StarIcon } from '@heroicons/react/24/solid'; // Example icons
+import { CheckCircleIcon, StarIcon } from '@heroicons/react/24/solid'; 
 
 const Home = () => {
-  // Define animation variants for reusability
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -27,13 +24,12 @@ const Home = () => {
     visible: { opacity: 1, y: 0 },
   };
 
-  // Data for the "Precision for Every Device" section
   const deviceShowcaseItems = [
     {
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmPpHRs0RsSwMRrSyDWIXXHJL4WD6fVi8J4A&s",
       title: "Smartphones & Wearables",
       desc: "Flawless screens, perfect circuits.",
-      color: "text-teal-300", // Use full Tailwind class string
+      color: "text-teal-300", 
       fallback: "Smartphone",
     },
     {
@@ -52,7 +48,6 @@ const Home = () => {
     },
   ];
 
-  // Data for the "Impact Across Industries" section
   const industryImpactItems = [
     {
       img: "https://images.ctfassets.net/v7wr16nrr0mz/4TDbNAhdMu1Gbl4WBDoHSn/519159862b2319133092f2e833b72aea/automotive-industry-trends-banner-1920x1080.jpg",

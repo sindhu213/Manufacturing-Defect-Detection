@@ -3,25 +3,30 @@ import { motion } from 'framer-motion';
 import { FiUpload, FiImage, FiCheckCircle, FiAlertCircle, FiCamera, FiVideoOff, FiTag } from 'react-icons/fi';
 import Webcam from 'react-webcam';
 
+function toProperCase(str) {
+  if (!str) {
+    return "";
+  }
+  return str
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 const Upload = () => {
   // --- State Management ---
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null); // URL for displaying the image
-  const [imageFile, setImageFile] = useState(null); // The actual File object to send to backend
-  const [analysisResult, setAnalysisResult] = useState(null); // Stores defect_description, confidence, predictedClass
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null); 
+  const [imageFile, setImageFile] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null); 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [isWebcamActive, setIsWebcamActive] = useState(false);
   const webcamRef = useRef(null);
 
   // --- Constants ---
-  const MAX_FILE_SIZE_MB = 5; // Maximum allowed file size in MB
-  const NON_DEFECTIVE_THRESHOLD = 0.70; // Confidence threshold for classifying as 'Non-Defective'
+  const MAX_FILE_SIZE_MB = 5; 
 
-  // --- Utility Functions ---
-
-  /**
-   * Resets all relevant states, clearing previous image and analysis results.
-   */
   const resetStates = useCallback(() => {
     setImagePreviewUrl(null);
     setImageFile(null);
@@ -50,13 +55,12 @@ const Upload = () => {
     setImagePreviewUrl(URL.createObjectURL(file));
     setImageFile(file);
     setError(null);
-    setIsWebcamActive(false); // Ensure webcam is stopped if a file is uploaded
+    setIsWebcamActive(false); 
   }, [resetStates]);
 
-  // --- Webcam Handlers ---
 
   const startWebcam = useCallback(() => {
-    resetStates(); // Clear previous results when starting webcam
+    resetStates(); 
     setIsWebcamActive(true);
     setError(null);
   }, [resetStates]);
@@ -81,8 +85,8 @@ const Upload = () => {
       .then(res => res.blob())
       .then(blob => {
         const file = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' });
-        processImageFile(file); // Use the unified image processing logic
-        stopWebcam(); // Close the webcam after capture
+        processImageFile(file); 
+        stopWebcam(); 
       })
       .catch(err => {
         console.error('Error converting webcam image:', err);
@@ -90,7 +94,6 @@ const Upload = () => {
       });
   }, [isWebcamActive, processImageFile, stopWebcam]);
 
-  // --- File Upload/Drag & Drop Handlers ---
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
@@ -106,7 +109,6 @@ const Upload = () => {
     }
   }, [processImageFile]);
 
-  // --- Defect Detection Logic ---
 
   const detectDefects = async () => {
     if (!imageFile) {
@@ -116,13 +118,12 @@ const Upload = () => {
 
     setIsProcessing(true);
     setError(null);
-    setAnalysisResult(null); // Clear previous analysis results
+    setAnalysisResult(null); 
 
     try {
       const formData = new FormData();
       formData.append('image', imageFile);
 
-      // IMPORTANT: Ensure your backend is running at this URL (e.g., a Flask server)
       const response = await fetch('http://127.0.0.1:5000/analyze', {
         method: 'POST',
         body: formData,
@@ -139,8 +140,10 @@ const Upload = () => {
       if (result) {
         const confidence = parseFloat(result.confidence);
         const newConfidence = isNaN(confidence) ? 0 : confidence;
-        const predictedClass = newConfidence >= NON_DEFECTIVE_THRESHOLD ? 'Non-Defective' : 'Defective';
+        const predictedClass = toProperCase(result.class.split(" ")[1]);
+        console.log(predictedClass)
 
+        console.log("Predicted class: ",predictedClass);
         setAnalysisResult({
           defect_description: result.defect_description || 'No specific defect description provided.',
           confidence: newConfidence,
@@ -161,7 +164,7 @@ const Upload = () => {
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "environment" // Use "user" for front camera, "environment" for back camera
+    facingMode: "environment" 
   };
 
   return (
