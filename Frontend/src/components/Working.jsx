@@ -125,7 +125,7 @@ const HowItWorks = () => {
                 <motion.div variants={itemVariants}>
                     <h2
                         className="text-3xl font-bold mb-6"
-                        style={{ color: '#a78bfa' }} // Purple-300 for emphasis
+                        style={{ color: '#a78bfa' }} 
                     >
                         See It In Action
                     </h2>
