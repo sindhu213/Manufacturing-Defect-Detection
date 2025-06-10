@@ -111,63 +111,6 @@ const HowItWorks = () => {
                 </motion.div>
             </motion.section>
 
-            <motion.section
-                ref={sectionRefs.visuals}
-                initial="hidden"
-                animate={controls}
-                variants={sectionVariants}
-                className="max-w-4xl mx-auto my-16 p-8 rounded-xl shadow-lg border border-gray-700"
-                style={{
-                    background: 'linear-gradient(135deg, rgba(24,24,32,0.7) 0%, rgba(0,0,0,0.9) 100%)'
-                }}
-            >
-                <motion.div variants={itemVariants}>
-                    <h2
-                        className="text-3xl font-bold mb-6"
-                        style={{ color: '#a78bfa' }} 
-                    >
-                        Defect Visualization
-                    </h2>
-                </motion.div>
-
-                <motion.p variants={itemVariants} className="text-lg text-gray-300 mb-8">
-                    See how our system identifies and highlights defects in real-time.
-                </motion.p>
-
-                <motion.div
-                    variants={itemVariants}
-                    className="grid md:grid-cols-2 gap-6"
-                >
-                    <motion.div
-                        className="bg-gray-700 p-6 rounded-lg border border-gray-600"
-                        whileHover={{ y: -5 }}
-                    >
-                        <div className="h-48 bg-gray-600 rounded mb-4 flex items-center justify-center">
-                            [Before Detection]
-                        </div>
-                        <h3
-                            className="text-xl font-semibold mb-2"
-                            style={{ color: '#f3f4f6' }}
-                        >Raw Input</h3>
-                        <p className="text-gray-400">Product image before analysis</p>
-                    </motion.div>
-
-                    <motion.div
-                        className="bg-gray-700 p-6 rounded-lg border border-gray-600"
-                        whileHover={{ y: -5 }}
-                    >
-                        <div className="h-48 bg-gray-600 rounded mb-4 flex items-center justify-center">
-                            [After Detection]
-                        </div>
-                        <h3
-                            className="text-xl font-semibold mb-2"
-                            style={{ color: '#f3f4f6' }} 
-                        >Defects Highlighted</h3>
-                        <p className="text-gray-400">AI-identified anomalies marked</p>
-                    </motion.div>
-                </motion.div>
-            </motion.section>
-
             {/* Demo Video Section */}
             <motion.section
                 ref={sectionRefs.demoVideo}
