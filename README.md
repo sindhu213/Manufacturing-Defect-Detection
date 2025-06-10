@@ -4,7 +4,7 @@
 ![Manufacturing Defect Detection - Website](https://github.com/sindhu213/Manufacturing-Defect-Detection/blob/main/assets/hero.png)
 
 
-This project aims to assist manufacturers in identifying and understanding visual defects in industrial products using deep learning. It not only classifies whether a product image contains a defect but also provides a natural language description of the defect, helping streamline quality control and traceability.We make use of the MVTec Anomaly Detection (AD) dataset along with relevant images from Google Image Search to train a robust model that generalizes well across defect types. 
+This project aims to assist manufacturers in identifying and understanding visual defects in industrial products using deep learning. It not only classifies whether a product image contains a defect but also provides a natural language description of the defect, helping streamline quality control and traceability. We make use of the MVTec Anomaly Detection (AD) dataset along with relevant images from Google Image Search to train a robust model that generalizes well across defect types. 
 
 
 ## Features
