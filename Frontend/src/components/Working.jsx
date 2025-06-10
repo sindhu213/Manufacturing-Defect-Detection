@@ -40,6 +40,116 @@ const HowItWorks = () => {
     controls.start("visible");
   }, [controls]);
 
+  const workflowSteps = [
+    {
+      id: 1,
+      color: {
+        bg: "bg-green-500",
+        text: "text-green-400"
+      },
+      title: "Start: Product Enters Inspection",
+      desc: "Every product goes through automated visual inspection before approval.",
+    },
+    {
+      id: 2,
+      color: {
+        bg: "bg-blue-500",
+        text: "text-blue-400"
+      },
+      title: "Image Acquisition",
+      desc: "Images captured via file upload (JPG, PNG) or live webcam integration."
+    },
+    {
+      id: 3,
+      color: {
+        bg: "bg-purple-500",
+        text: "text-purple-400"
+      },
+      title: "Data Preprocessing",
+      desc: "Images are cleaned and enhanced for analysis.",
+      extra: (
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className="px-2 py-1 bg-gray-700 rounded text-sm">Resizing</span>
+          <span className="px-2 py-1 bg-gray-700 rounded text-sm">Noise Removal</span>
+          <span className="px-2 py-1 bg-gray-700 rounded text-sm">Normalization</span>
+        </div>
+      ),
+    },
+    {
+      id: 4,
+      color: {
+        bg: "bg-pink-500",
+        text: "text-pink-400"
+      },
+      title: "ML Model Inference",
+      desc: "Preprocessed image is analyzed using a trained deep learning model to predict defect status.",
+    },
+    {
+      id: 5,
+      color: {
+        bg: "bg-yellow-500",
+        text: "text-yellow-400"
+      },
+      title: "Defect Detection Decision",
+      desc: "AI makes the final determination:",
+      extra: (
+        <div className="mt-2 flex gap-4">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+            <span>No defect → Approved</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+            <span>Defect found → Rejected</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 6,
+      color: {
+        bg: "bg-red-500",
+        text: "text-red-400"
+      },
+      title: "Report Generation",
+      desc: "A quality report is generated for review and records. It helps track patterns and defects.",
+    },
+    {
+      id: 7,
+      color: {
+        bg: "bg-teal-500",
+        text: "text-teal-400"
+      },
+      title: "Process Optimization",
+      desc: "The system uses past inspection results to fine-tune the process and improve accuracy.",
+    },
+    {
+      id: 8,
+      color: {
+        bg: "bg-indigo-500",
+        text: "text-indigo-400"
+      },
+      title: "Continuous Monitoring",
+      desc: "Real-time feedback allows the model to keep learning and catch new defects as they arise.",
+      extra: (
+        <div className="mt-2 flex items-center text-sm text-gray-400">
+          <svg
+            className="w-4 h-4 mr-1 animate-pulse"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+              clipRule="evenodd"
+            />
+          </svg>
+          System improves with each inspection
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div
       className="min-h-screen text-gray-200 font-sans p-5 overflow-x-hidden"
@@ -113,105 +223,18 @@ const HowItWorks = () => {
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-6">
-          {[
-            {
-              id: 1,
-              color: "green",
-              title: "Start: Product Enters Inspection",
-              desc: "Every product goes through automated visual inspection before approval.",
-            },
-            {
-              id: 2,
-              color: "blue",
-              title: "Image Acquisition",
-              desc: "Images captured via file upload (JPG, PNG) or live webcam integration."
-            },
-            {
-              id: 3,
-              color: "purple",
-              title: "Data Preprocessing",
-              desc: "Images are cleaned and enhanced for analysis.",
-              extra: (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="px-2 py-1 bg-gray-700 rounded text-sm">Resizing</span>
-                  <span className="px-2 py-1 bg-gray-700 rounded text-sm">Noise Removal</span>
-                  <span className="px-2 py-1 bg-gray-700 rounded text-sm">Normalization</span>
-                </div>
-              ),
-            },
-            {
-              id: 4,
-              color: "pink",
-              title: "ML Model Inference",
-              desc: "Preprocessed image is analyzed using a trained deep learning model to predict defect status.",
-            },
-            {
-              id: 5,
-              color: "yellow",
-              title: "Defect Detection Decision",
-              desc: "AI makes the final determination:",
-              extra: (
-                <div className="mt-2 flex gap-4">
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
-                    <span>No defect → Approved</span>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                    <span>Defect found → Rejected</span>
-                  </div>
-                </div>
-              ),
-            },
-            {
-              id: 6,
-              color: "red",
-              title: "Report Generation",
-              desc: "A quality report is generated for review and records. It helps track patterns and defects.",
-            },
-            {
-              id: 7,
-              color: "teal",
-              title: "Process Optimization",
-              desc: "The system uses past inspection results to fine-tune the process and improve accuracy.",
-            },
-            {
-              id: 8,
-              color: "indigo",
-              title: "Continuous Monitoring",
-              desc: "Real-time feedback allows the model to keep learning and catch new defects as they arise.",
-              extra: (
-                <div className="mt-2 flex items-center text-sm text-gray-400">
-                  <svg
-                    className="w-4 h-4 mr-1 animate-pulse"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  System improves with each inspection
-                </div>
-              ),
-            },
-          ].map(({ id, color, title, desc, extra }) => (
+          {workflowSteps.map(({ id, color, title, desc, extra }) => (
             <motion.div
               key={id}
               variants={itemVariants}
               className="flex flex-col md:flex-row gap-4 p-4 bg-gray-800 rounded-lg"
               whileHover={{ scale: 1.02 }}
             >
-              <div
-                className={`flex-shrink-0 w-12 h-12 bg-${color}-500 rounded-full flex items-center justify-center text-white font-bold text-xl`}
-              >
+              <div className={`flex-shrink-0 w-12 h-12 ${color.bg} rounded-full flex items-center justify-center text-white font-bold text-xl`}>
                 {id}
               </div>
               <div>
-                <h3 className={`text-xl font-semibold text-${color}-400`}>{title}</h3>
+                <h3 className={`text-xl font-semibold ${color.text}`}>{title}</h3>
                 <p className="text-gray-300">{desc}</p>
                 {extra}
               </div>
