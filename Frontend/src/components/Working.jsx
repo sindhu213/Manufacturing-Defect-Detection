@@ -99,7 +99,7 @@ const HowItWorks = () => {
                 </motion.div>
 
                 <motion.p variants={itemVariants} className="text-lg text-gray-300 mb-8">
-                    Our intelligent system follows a streamlined workflow for maximum efficiency.
+                    Our intelligent system follows a streamlined workflow for maximum efficiency
                 </motion.p>
 
                 <motion.div
