@@ -9,7 +9,7 @@ This project aims to assist manufacturers in identifying and understanding visua
 
 ## Features
 
-- **Defect Detection & Classification**: Identifies whether a product image has a defect using a TensorFlow-based model.
+- **Defect Detection & Classification**: Identifies whether a product image has a defect using a variant of MobileNets.
 
 - **Automated Defect Description** Uses Google’s Gemini API to describe the type and location of the defect in natural language.
 
