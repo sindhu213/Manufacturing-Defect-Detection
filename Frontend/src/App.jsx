@@ -5,6 +5,7 @@ import Upload from './components/Upload';
 import Working from './components/Working';
 import Footer from './components/Footer';
 import Home from './components/Home';
+import NotFoundPage from './components/404page';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/upload" element={<Upload />} />
               <Route path="/working" element={<Working />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </div>
        <Footer />
