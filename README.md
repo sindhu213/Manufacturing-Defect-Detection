@@ -35,13 +35,13 @@ pip install -r requirements.txt
 Create a `.env` file inside the backend folder:
 
 ```bash
-  GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 Then, start the Flask server:
 
 ```bash
-  python app.py
+python app.py
 ```
 
 ### Frontend Setup
